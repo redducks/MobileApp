@@ -1,0 +1,26 @@
+//created on: Jul 25, 2012
+package com.pls.organization.users
+
+import com.pls.organization.model.User;
+
+rule "UserID is empty"
+	salience 100
+	no-loop
+    when
+        user: User(userId == null || == "")
+    then
+    	String userId = user.getEmailAddress();
+        modify(user) {setUserId(userId)};
+        System.out.println("fired rule " + kcontext.getRule().getName());
+end
+
+rule "User ID is converted to upper case"
+	salience 99
+	no-loop
+	when 
+		user: User(userId != null && != "") 
+	then
+		String userId = user.getUserId().toUpperCase();
+        modify(user) {setUserId(userId)};
+        System.out.println("fired rule " + kcontext.getRule().getName());
+end

@@ -1,0 +1,98 @@
+//created on: Oct 02, 2012
+package com.pls.carrier
+import com.pls.carrier.ws.co.CarrierCapacityCO;
+import com.pls.core.exceptions.ExceptionCodes;
+import com.pls.core.exceptions.ValidationException;
+import com.pls.core.util.DateUtility;
+import java.util.Date;
+
+rule "Equipment Type is Required"
+	salience 100
+	no-loop
+    when
+        capacity: CarrierCapacityCO(equipmentType == null || == "")
+    then
+    	throw new ValidationException(ExceptionCodes.EQUIPMENT_TYPE_REQUIRED, "Equipment Type is required."); 
+end
+
+rule "Carrier Contact is Required"
+	salience 99
+	no-loop
+    when
+        capacity: CarrierCapacityCO(carrierContact == null || == "")
+    then
+    	throw new ValidationException(ExceptionCodes.CARRIER_CONTACT_REQUIRED, "Carrier Contact is required."); 
+end
+
+rule "Carrier SCAC or MC Number is required"
+	salience 98
+	no-loop
+    when
+        capacity: CarrierCapacityCO((scac == null || == "") && (mcNumber == null || == ""))
+    then
+    	throw new ValidationException(ExceptionCodes.SCAC_OR_MCNUM_REQUIRED, "SCAC or MC Number is required."); 
+end
+
+rule "Max Weight Should be greater than zero"
+	salience 97
+	no-loop
+    when
+        capacity: CarrierCapacityCO(maxWeight <= 0)
+    then
+    	throw new ValidationException(ExceptionCodes.INVALID_WEIGHT, "Max Weight must be greater than 0."); 
+end
+
+rule "No of trucks Should be greater than zero"
+	salience 96
+	no-loop
+    when
+        capacity: CarrierCapacityCO(noOfTrucks <= 0)
+    then
+    	throw new ValidationException(ExceptionCodes.INVALID_NO_OF_TRUCKS, "# of Trucks must be greater than 0."); 
+end
+
+rule "Origin City/State or Origin Zip or Origin Zone is required"
+	salience 95
+	no-loop
+    when
+        capacity: CarrierCapacityCO(((originCity == null || == "") || (originState == null || == "")) && (originZip == null || == "") && (originZone == null || == ""))
+    then
+    	throw new ValidationException(ExceptionCodes.ORIGIN_REQUIRED, "Origin City/State or Origin Zip or Origin Zone is required."); 
+end
+
+rule "Available Date and Time is required"
+	salience 94
+	no-loop
+    when
+        capacity: CarrierCapacityCO(availableDateTime == null)
+    then
+    	throw new ValidationException(ExceptionCodes.START_DATE_REQUIRED, "Available Date and Time is required."); 
+end
+
+rule "Available Date and Time should not be in Past"
+	salience 93
+	no-loop
+    when
+    	not CarrierCapacityCO(DateUtility.rollToEndOfDay(availableDateTime) >= DateUtility.rollToBeginningOfDay(new Date()))
+    then
+    	throw new ValidationException(ExceptionCodes.INVALID_START_DATE, "Available Date and Time must not be in the past."); 
+end
+
+rule "Status is required"
+	salience 92
+	no-loop
+    when
+        capacity: CarrierCapacityCO(status ==  null || == "")
+    then
+    	throw new ValidationException(ExceptionCodes.STATUS_REQUIRED, "Status is required."); 
+end
+
+rule "Status should be 'Active' or 'Pending'"
+	salience 91
+	no-loop
+    when
+        capacity: CarrierCapacityCO(status != "A" && != "P")
+    then
+    	throw new ValidationException(ExceptionCodes.INVALID_STATUS, "Only 'Active' or 'Pending' values are accepted for status."); 
+end
+

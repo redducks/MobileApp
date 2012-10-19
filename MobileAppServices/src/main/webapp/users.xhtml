@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:head>
+    <title>PLSPRO2.0 Sample - Get Users</title>
+	<h:outputStylesheet name="css/plspro2.css" />
+</h:head>
+
+<h:body>
+    <h2>Add/Search Users</h2>
+    <div class="clear" />
+    <h:form id="searchForm">
+        <fieldset>
+            <legend><b>Search</b></legend>
+            <h:panelGrid columns="3" columnClasses="titleCell">
+                <h:outputLabel value="User Id" />
+                <h:inputText id="userName" value="#{usersForm.userName}" />
+                <h:commandButton value="Search" action="#{userManager.search}"/>
+            </h:panelGrid>
+        </fieldset>
+    </h:form>
+    <p/>
+    <div class="clear" />
+    <h:form id="addUserForm">
+        <fieldset>
+            <legend><b>Add User</b></legend>
+            <h:panelGrid columns="3" columnClasses="titleCell">
+                <h:outputLabel for="firstName" value="First Name:"/>
+	            <h:inputText id="firstName" value="#{usersForm.newUser.firstName}" required="true" requiredMessage="First Name is required"/>
+	            <h:message for="firstName" errorClass="invalid"/>
+	            
+	            <h:outputLabel for="lastName" value="Last Name:"/>
+	            <h:inputText id="lastName" value="#{usersForm.newUser.lastName}" required="true" requiredMessage="Last Name is required"/>
+	            <h:message for="lastName" errorClass="invalid"/>
+	            
+	            <h:outputLabel for="emailAddress" value="Email Address:"/>
+	            <h:inputText id="emailAddress" value="#{usersForm.newUser.emailAddress}" required="true" requiredMessage="Email Address is required"/>
+	            <h:message for="emailAddress" errorClass="invalid"/>
+	            
+	            <h:outputLabel for="userId" value="User Name:"/>
+	            <h:inputText id="userId" value="#{usersForm.newUser.userId}"/>
+	            <h:message for="userId" errorClass="invalid"/>
+	            
+	            <h:outputLabel for="password" value="Password:"/>
+	            <h:inputSecret id="password" value="#{usersForm.newUser.password}" required="true" requiredMessage="Password is required"/>
+	            <h:message for="password" errorClass="invalid"/>
+            </h:panelGrid>
+            <p/>
+            <h:panelGrid columns="2">
+               <h:commandButton id="register" action="#{userManager.register}" value="Add User"/>
+               <h:messages styleClass="messages" errorClass="invalid" infoClass="valid" warnClass="warning"
+                           globalOnly="true"/>
+            </h:panelGrid>
+        </fieldset>
+    </h:form>
+    <p/>
+    <div class="clear" />
+    <h:dataTable value="#{userManager.users}" var="user" id="usersGrid" styleClass="usersGrid"
+    			headerClass="usersGrid-header"
+    			rowClasses="usersGrid-odd-row,usersGrid-even-row">
+         <h:column>
+            <f:facet name="header">
+               Username
+            </f:facet>
+            <h:outputText value="#{user.userId}" />
+         </h:column>
+         <h:column>
+            <f:facet name="header">
+               First Name
+            </f:facet>
+            <h:outputText value="#{user.firstName}" />
+         </h:column>
+         <h:column>
+            <f:facet name="header">
+               Last Name
+            </f:facet>
+            <h:outputText value="#{user.lastName}" />
+         </h:column>
+      </h:dataTable>
+</h:body>
+</html>
