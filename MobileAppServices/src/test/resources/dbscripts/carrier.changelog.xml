@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+         
+    <changeSet id="1" author="pchalla" dbms="oracle">
+    	<preConditions onFail="CONTINUE">
+    		<tableExists tableName="CARRIER_CAPACITY" schemaName="DEV_FLATBED"/>
+    	</preConditions>
+    	<comment>Drop the existing CARRIER_CAPACITY table and create a new table.</comment>
+    	<dropTable tableName="CARRIER_CAPACITY"/>
+    	<dropSequence sequenceName="CARRIER_CAPACITY_SEQ"/>
+    	<dropSequence sequenceName="CC_SEQ"/>
+    </changeSet>
+    
+    <changeSet author="pchalla" id="2" dbms="oracle">
+    	<createSequence sequenceName="CARRIER_CAPACITY_SEQ"/>
+    	<createSequence sequenceName="CC_SEQ"/>
+    	<createTable tableName="CARRIER_CAPACITY" schemaName="DEV_FLATBED">
+    		<column name="CARRIER_CAPACITY_ID" autoIncrement="true" type="number(10,0)">
+    			<constraints primaryKey="true" nullable="false" primaryKeyName="CARRIER_CAPACITY_PK"/>
+    		</column>
+    		<column name="CC_ID" type="number(10,0)">
+    			<constraints nullable="false"/>
+    		</column>
+    		<column name="CARRIER_ORG_ID" type="number(10,0)" />
+    		<column name="CONTAINER_CD" type="varchar(10)" />
+    		<column name="NO_OF_TRUCKS" type="number(6,0)" />
+    		<column name="PREF_COMMODITY" type="varchar(100)" />
+    		<column name="MAX_WEIGHT" type="number(10,0)" />
+    		<column name="ORIG_CITY" type="varchar(30)" />
+    		<column name="ORIG_STATE" type="varchar(6)" />
+    		<column name="ORIG_ZIP" type="varchar(10)" />
+    		<column name="ORIG_COUNTRY" type="varchar(10)" />
+    		<column name="AVAIL_START_DATE" type="Date" />
+    		<column name="AVAIL_END_DATE" type="Date" />
+    		<column name="CONTACT_PERSON_ID" type="number(10,0)" />
+    		<column name="ORG_USER_ID" type="number(10,0)" />
+    		<column name="PREF_DEST_CITY" type="varchar(30)" />
+    		<column name="PREF_DEST_STATE" type="varchar(6)" />
+    		<column name="PREF_DEST_ZIP" type="varchar(10)" />
+    		<column name="PREF_DEST_COUNTRY" type="varchar(10)" />
+    		<column name="ORIG_ZONE_ID" type="number(10,0)" />
+    		<column name="PREF_DEST_ZONE_ID" type="number(10,0)" />
+    		<column name="STATUS" type="varchar(1)" />
+    		<column name="CONTACT_EMAIL_ADDR" type="varchar(100)" />
+    		<column name="DATE_CREATED" type="Date" >
+    			<constraints nullable="false"/>
+    		</column>
+    		<column name="CREATED_BY" type="number(10,0)" >
+    			<constraints nullable="false"/>
+    		</column>
+    		<column name="DATE_MODIFIED" type="Date">
+    			<constraints nullable="false"/>
+    		</column>
+    		<column name="MODIFIED_BY" type="number(10,0)" defaultValueNumeric="0">
+    			<constraints nullable="false"/>
+    		</column>
+    		<column name="VERSION" type="number(5,0)" defaultValueNumeric="1">
+    			<constraints nullable="false"/>
+    		</column>
+    	</createTable>
+    	<addForeignKeyConstraint baseColumnNames="CARRIER_ORG_ID"
+                                 baseTableName="CARRIER_CAPACITY"
+                                 constraintName="CARRIER_ORG_FK"
+                                 referencedColumnNames="ORG_ID"
+                                 referencedTableName="ORGANIZATIONS"/>
+    </changeSet>
+    
+	<changeSet id="3" author="pchalla" dbms="oracle" context="test" runAlways="true">
+     	<delete tableName="ORGANIZATIONS" schemaName="DEV_FLATBED">
+     		<where>SCAC = '9876'</where>
+     	</delete>
+        <insert tableName="ORGANIZATIONS" schemaName="DEV_FLATBED">
+			<column name="ORG_ID" valueNumeric="999999"/>
+		    <column name="NAME" value="TEST CARRIER"/>
+		    <column name="EMPLOYER_NUM" value="99-9999999"/>
+		    <column name="ORG_TYPE" value="CARRIER"/>
+		    <column name="STATUS" value="A"/>
+		    <column name="CONTACT_LAST_NAME" value="HUGHES"/>
+		    <column name="CONTACT_FIRST_NAME" value="KERRY"/>
+		    <column name="SCAC" value="9876"/>
+		    <column name="MC_NUM" value="123456"/>
+		    <column name="DATE_CREATED" valueDate="2001-01-11"/>
+		    <column name="CREATED_BY" valueNumeric="0"/>
+		    <column name="DATE_MODIFIED" valueDate="2005-12-17"/>
+		    <column name="MODIFIED_BY" valueNumeric="0"/>
+		    <column name="LOC_RATE_OVERRIDE" value="N"/>
+		    <column name="STATUS_REASON" value="ACTOPREQ"/>
+		    <column name="NETWORK_ID" valueNumeric="0"/>
+		    <column name="CRITICAL_EMAIL_ADDRESS" value="test@test.com"/>
+		    <column name="INCL_CARR_NOT_HAULED_LANE" value="N"/>
+		</insert>
+    </changeSet>
+    
+    <changeSet id="4" author="pchalla" dbms="oracle" context="test" runAlways="true">
+        <delete tableName="CARRIER_CAPACITY" schemaName="DEV_FLATBED"/>
+    </changeSet>
+    
+    <changeSet id="5" author="pchalla" dbms="oracle" context="test" runAlways="true">
+    	<preConditions onFail="CONTINUE">
+            <sqlCheck expectedResult="0">select count(*) from ORGANIZATIONS where ORG_ID = 38941</sqlCheck>
+        </preConditions>
+        <insert tableName="ORGANIZATIONS" schemaName="DEV_FLATBED">
+			<column name="ORG_ID" valueNumeric="38941"/>
+		    <column name="NAME" value="PLS PRO"/>
+		    <column name="EMPLOYER_NUM" value="25-1851102-ROOT"/>
+		    <column name="ORG_TYPE" value="EFLATBED"/>
+		    <column name="STATUS" value="A"/>
+		    <column name="DATE_CREATED" valueDate="2001-01-11"/>
+		    <column name="CREATED_BY" valueNumeric="0"/>
+		    <column name="DATE_MODIFIED" valueDate="2005-12-17"/>
+		    <column name="MODIFIED_BY" valueNumeric="0"/>
+		    <column name="LOC_RATE_OVERRIDE" value="N"/>
+		    <column name="STATUS_REASON" value="ACTOPREQ"/>
+		    <column name="NETWORK_ID" valueNumeric="5"/>
+		    <column name="CRITICAL_EMAIL_ADDRESS" value="test@test.com"/>
+		</insert>
+    </changeSet>
+    
+    <changeSet id="6" author="pchalla" dbms="oracle" context="test" runAlways="true">
+        <delete tableName="ZONES" schemaName="DEV_RATER">
+     		<where>name = 'ZONE 999'</where>
+     	</delete>
+     	<insert tableName="ZONES" schemaName="DEV_RATER">
+			<column name="ZONE_ID" valueNumeric="999999"/>
+		    <column name="NAME" value="ZONE 999"/>
+		    <column name="SHIPPER_ORG_ID" valueNumeric="38941"/>
+		    <column name="RANK" valueNumeric="1"/>
+		    <column name="CAPACITY_ZONE" value="Y"/>
+		    <column name="DATE_CREATED" valueDate="2001-01-11"/>
+		    <column name="CREATED_BY" valueNumeric="0"/>
+		    <column name="DATE_MODIFIED" valueDate="2005-12-17"/>
+		    <column name="MODIFIED_BY" valueNumeric="0"/>
+		    <column name="VERSION" valueNumeric="1"/>
+		</insert>
+		<insert tableName="ZONES" schemaName="DEV_RATER">
+			<column name="ZONE_ID" valueNumeric="999998"/>
+		    <column name="NAME" value="ZONE 999"/>
+		    <column name="SHIPPER_ORG_ID" valueNumeric="38941"/>
+		    <column name="RANK" valueNumeric="1"/>
+		    <column name="CAPACITY_ZONE" value="N"/>
+		    <column name="DATE_CREATED" valueDate="2001-01-11"/>
+		    <column name="CREATED_BY" valueNumeric="0"/>
+		    <column name="DATE_MODIFIED" valueDate="2005-12-17"/>
+		    <column name="MODIFIED_BY" valueNumeric="0"/>
+		    <column name="VERSION" valueNumeric="1"/>
+		</insert>
+    </changeSet>
+    
+</databaseChangeLog>

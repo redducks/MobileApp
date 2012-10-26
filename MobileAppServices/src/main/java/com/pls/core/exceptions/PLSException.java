@@ -2,6 +2,7 @@ package com.pls.core.exceptions;
 
 public class PLSException extends Exception {
 	
+	private static final long serialVersionUID = -7323885284076193558L;
 	private int errorCode;
 	private String message;
 	private Throwable cause;

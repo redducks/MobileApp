@@ -17,6 +17,7 @@ import com.pls.carrier.ws.domain.CarrierCapacityCO;
 import com.pls.core.exceptions.ExceptionCodes;
 import com.pls.core.exceptions.PLSException;
 import com.pls.core.service.BaseService;
+import com.pls.core.util.ObjectUtil;
 import com.pls.core.util.PropertyUtil;
 import com.pls.sendmail.vo.TemplateContent;
 
@@ -31,11 +32,13 @@ public class CarrierCapacityService extends BaseService {
 
 	@Inject 
 	private CarrierCapacityConverter converter;
+	
+	public static final String POST_CAPACITY_RULE_FILE = "rules/postCarrierCapacity.drl";
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	protected CarrierCapacity validateNSaveCapacity(CarrierCapacityCO carrierCapacity) throws PLSException {
 		// Fire the rules
-		fireRules("rules/postCarrierCapacity.drl", carrierCapacity);
+		fireRules(POST_CAPACITY_RULE_FILE, carrierCapacity);
 
 		// Check if SCAC and MC Number combination is valid
 		Long carrierOrgId = ccDao.getCarrier(carrierCapacity.getScac(), carrierCapacity.getMcNumber());
@@ -43,18 +46,32 @@ public class CarrierCapacityService extends BaseService {
 		// Check if Carrier Contact is valid
 		//		Object[] contactId = ccDao.getCarrierContact(carrierCapacity.getCarrierContact(), carrierOrgId);
 
+		// Get the origin zone id
+		Long originZone = null;
+		if (!ObjectUtil.isEmpty(carrierCapacity.getOriginZone())) {
+			originZone = ccDao.getZoneIdByName(carrierCapacity.getOriginZone());
+		}
+
+		// Get the Destination zone id
+		Long destZone = null;
+		if (!ObjectUtil.isEmpty(carrierCapacity.getDestZone())) {
+			destZone = ccDao.getZoneIdByName(carrierCapacity.getDestZone());
+		}
+
 		// Convert the Web service criteria object to domain object
 		CarrierCapacity capacityDo = converter.convert(carrierCapacity);
 		capacityDo.setCarrierOrgId(carrierOrgId);
 		//		capacityDo.setContactPersonId(((BigDecimal)contactId[0]).longValue());
 		//		capacityDo.setOrgUserId(((BigDecimal)contactId[1]).longValue());
-
+		capacityDo.setOrigZoneId(originZone);
+		capacityDo.setPrefDestZoneId(destZone);
+		
 		// Get the CCID
 		capacityDo.setCcId(ccDao.getGeneratedCCId());
 
 		// Save the Capacity
 		ccDao.saveCarrierCapacity(capacityDo);
-		
+
 		return capacityDo;
 	}
 

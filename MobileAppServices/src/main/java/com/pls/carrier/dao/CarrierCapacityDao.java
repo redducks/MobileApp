@@ -53,7 +53,7 @@ public class CarrierCapacityDao {
 			return orgId.longValue();
 		} catch (Exception ex) {
 			logger.log(Level.SEVERE, "An error occurred when finding the carrier.");
-			throw new PLSException(ExceptionCodes.UNKNOWN_ERROR.getCode(), "An error occurred when finding the carrier.", ex);
+			throw new PLSException(ExceptionCodes.UNKNOWN_CARRIER.getCode(), "An error occurred when finding the carrier.", ex);
 		}
 	}
 
@@ -79,5 +79,20 @@ public class CarrierCapacityDao {
 		Query query = em.createNativeQuery(sql);
 		BigDecimal ccId = (BigDecimal)query.getSingleResult();
 		return ccId.longValue();
+	}
+
+	public Long getZoneIdByName(String zoneName) throws PLSException {
+		try {
+			Query query = em.createNativeQuery("select z_14.zone_id FROM " +
+					" zones z_14 WHERE z_14.shipper_org_id = 38941 AND z_14.capacity_zone = 'Y' " +
+					" and z_14.name = :zoneName ");
+			query.setParameter("zoneName", zoneName);
+
+			BigDecimal zoneId = (BigDecimal)query.getSingleResult();
+			return zoneId.longValue();
+		} catch (Exception ex) {
+			logger.log(Level.SEVERE, "An error occurred when finding the zone.");
+			throw new PLSException(ExceptionCodes.UNKNOWN_ZONE.getCode(), "No zone found with the name " + zoneName, ex);
+		}
 	}
 }

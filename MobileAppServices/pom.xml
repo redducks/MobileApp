@@ -95,7 +95,7 @@
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.0-api</artifactId>
-            <scope>provided</scope>
+            <scope>provided</scope> 
         </dependency>
 
         <!-- Import the EJB API, we use provided scope as the API is included in JBoss -->
@@ -178,8 +178,14 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-jpamodelgen</artifactId>
             <version>${version.org.hibernate-jpamodelgen}</version>
-            <scope>provided</scope>
+            <scope>provided</scope> 
         </dependency>
+        
+        <dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.5.6</version>
+		</dependency>
 
         <!-- Needed for running tests (you may also use TestNG) -->
         <dependency>
@@ -188,6 +194,21 @@
             <version>${version.junit}</version>
             <scope>test</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc6</artifactId>
+            <version>11.2.0</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+		   <groupId>org.hibernate</groupId>
+		   <artifactId>hibernate-entitymanager</artifactId>
+		   <version>4.1.7.Final</version>
+		   <scope>test</scope>
+		 </dependency>
+        
 
         <!-- Optional, but highly recommended -->
         <!-- Arquillian allows you to test enterprise code such as EJBs and Transactional(JTA) JPA from JUnit/TestNG -->
@@ -241,6 +262,32 @@
                 <artifactId>jboss-as-maven-plugin</artifactId>
                 <version>7.1.1.Final</version>
             </plugin>
+            
+            <plugin>
+	          <groupId>org.liquibase</groupId>
+	          <artifactId>liquibase-maven-plugin</artifactId>
+	          <version>2.0.1</version>
+	          <executions>
+	            <execution>
+	              <phase>process-test-resources</phase>
+	              <configuration>
+	                <propertyFile>src/test/resources/liquibase.properties</propertyFile>
+	              </configuration>
+	              <goals>
+	                <goal>update</goal>
+	              </goals>
+	            </execution>
+	       <!--     <execution>
+	              <phase>process-test-resources</phase>
+	              <configuration>
+	                <propertyFile>src/test/resources/liquibase_rater.properties</propertyFile>
+	              </configuration>
+	              <goals>
+	                <goal>update</goal>
+	              </goals>
+	            </execution>	 --> 
+	          </executions>
+	        </plugin>
         </plugins>
     </build>
     
@@ -258,7 +305,7 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>2.4.3</version>
                         <configuration>
-                            <skip>true</skip>
+                            <skip>false</skip>
                         </configuration>
                     </plugin>
                 </plugins>

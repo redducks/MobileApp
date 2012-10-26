@@ -14,11 +14,14 @@
    xsi:schemaLocation="
         http://java.sun.com/xml/ns/persistence
         http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
-   <persistence-unit name="plspro">
+   <persistence-unit name="plsproTest">
       <provider>org.hibernate.ejb.HibernatePersistence</provider>
-      <jta-data-source>java:jboss/datasources/plsproDS</jta-data-source>
-       <properties>
-			<property name="hibernate.show_sql" value="true"/>
+       	<properties>
+	      	<property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect"/>
+	      	<property name="hibernate.connection.driver_class" value="oracle.jdbc.driver.OracleDriver" />
+	      	<property name="hibernate.connection.url" value="jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(LOAD_BALANCE=YES)(CONNECT_DATA=(SERVICE_NAME=orcl.quad.local)))"/>
+	      	<property name="hibernate.connection.user" value="DEV_FLATBED"/>
+			<property name="hibernate.connection.password" value="DEV_FLATBED"/>
 		</properties>
-   </persistence-unit>
+	</persistence-unit>
 </persistence>
